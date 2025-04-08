@@ -1,0 +1,294 @@
+import { useState } from "react";
+import { cn } from "../lib/utils";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+
+interface Testimonial {
+  id: string;
+  name: string;
+  position: string;
+  company: string;
+  avatar: string;
+  content: string;
+  rating: number;
+  category: string;
+}
+
+const Testimonials = () => {
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const testimonials: Testimonial[] = [
+    {
+      id: "1",
+      name: "Alex Johnson",
+      position: "CTO",
+      company: "TechInnovate",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      content:
+        "Naman's data analysis skills are exceptional. He transformed our raw sales data into actionable insights that directly led to a 20% increase in revenue. His dashboards are intuitive and exactly what we needed.",
+      rating: 5,
+      category: "Data Analysis",
+    },
+    {
+      id: "2",
+      name: "Sarah Williams",
+      position: "Marketing Director",
+      company: "GrowthMarketing",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+      content:
+        "The web application Naman built for our marketing campaigns exceeded our expectations. It's responsive, user-friendly, and has significantly improved our lead generation process. Highly recommended!",
+      rating: 5,
+      category: "Web Development",
+    },
+    {
+      id: "3",
+      name: "Michael Chen",
+      position: "Research Lead",
+      company: "InnovateAI",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
+      content:
+        "Working with Naman on our machine learning project was a great experience. His implementation of YOLOv9 for our image recognition system was efficient and accurate. He has a deep understanding of ML concepts.",
+      rating: 4,
+      category: "Machine Learning",
+    },
+    {
+      id: "4",
+      name: "Emily Rodriguez",
+      position: "Product Manager",
+      company: "ProductFirst",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
+      content:
+        "Naman created an interactive dashboard that made our product analytics accessible to the entire team. His attention to detail and understanding of our needs resulted in a tool we use daily.",
+      rating: 5,
+      category: "Data Visualization",
+    },
+    {
+      id: "5",
+      name: "David Kim",
+      position: "Startup Founder",
+      company: "NextGen Solutions",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
+      content:
+        "As a startup with limited resources, Naman's technical consultation was invaluable. He helped us choose the right tech stack and implement best practices that set us up for scalable growth.",
+      rating: 5,
+      category: "Technical Consultation",
+    },
+    {
+      id: "6",
+      name: "Lisa Thompson",
+      position: "Data Scientist",
+      company: "DataDriven",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
+      content:
+        "Collaborating with Naman on our data science project was seamless. His Python skills and understanding of statistical methods helped us derive meaningful insights from complex datasets.",
+      rating: 4,
+      category: "Data Science",
+    },
+  ];
+
+  const categories = [
+    "all",
+    ...Array.from(new Set(testimonials.map((t) => t.category))),
+  ];
+
+  const filteredTestimonials = testimonials.filter(
+    (testimonial) =>
+      activeCategory === "all" || testimonial.category === activeCategory,
+  );
+
+  const nextTestimonial = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === filteredTestimonials.length - 1 ? 0 : prevIndex + 1,
+    );
+  };
+
+  const prevTestimonial = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? filteredTestimonials.length - 1 : prevIndex - 1,
+    );
+  };
+
+  return (
+    <section className="w-full min-h-screen bg-background py-20 px-4 md:px-8 lg:px-16">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center">
+          Client Feedback
+        </h2>
+
+        <p className="text-center text-muted-foreground max-w-3xl mx-auto mb-12">
+          Don't just take my word for it. Here's what clients and collaborators
+          have to say about working with me on various projects.
+        </p>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => {
+                setActiveCategory(category);
+                setCurrentIndex(0);
+              }}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                activeCategory === category
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-card/80",
+              )}
+            >
+              {category === "all" ? "All Testimonials" : category}
+            </button>
+          ))}
+        </div>
+
+        {/* Featured Testimonial Carousel */}
+        <div className="mb-16">
+          <div className="relative bg-card rounded-xl shadow-lg overflow-hidden">
+            {filteredTestimonials.length > 0 ? (
+              <div className="p-8 md:p-12">
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <div className="md:w-1/3 flex flex-col items-center">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-primary/20 mb-4">
+                      <img
+                        src={filteredTestimonials[currentIndex].avatar}
+                        alt={filteredTestimonials[currentIndex].name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h4 className="text-xl font-bold text-center">
+                      {filteredTestimonials[currentIndex].name}
+                    </h4>
+                    <p className="text-muted-foreground text-center">
+                      {filteredTestimonials[currentIndex].position},{" "}
+                      {filteredTestimonials[currentIndex].company}
+                    </p>
+                    <div className="flex mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={cn(
+                            "w-5 h-5",
+                            i < filteredTestimonials[currentIndex].rating
+                              ? "text-yellow-400"
+                              : "text-gray-300",
+                          )}
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="mt-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                      {filteredTestimonials[currentIndex].category}
+                    </span>
+                  </div>
+
+                  <div className="md:w-2/3">
+                    <div className="relative">
+                      <Quote className="absolute -top-2 -left-2 h-8 w-8 text-primary/20" />
+                      <p className="text-lg md:text-xl italic pt-6 px-6">
+                        {filteredTestimonials[currentIndex].content}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-center mt-8 gap-4">
+                  <button
+                    onClick={prevTestimonial}
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors"
+                    aria-label="Previous testimonial"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <div className="flex gap-1">
+                    {filteredTestimonials.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentIndex(index)}
+                        className={cn(
+                          "w-2 h-2 rounded-full transition-all",
+                          currentIndex === index
+                            ? "w-6 bg-primary"
+                            : "bg-muted hover:bg-primary/50",
+                        )}
+                        aria-label={`Go to testimonial ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={nextTestimonial}
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors"
+                    aria-label="Next testimonial"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 text-center">
+                <p>No testimonials found for this category.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Testimonial Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTestimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="bg-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group"
+            >
+              <Quote className="absolute top-4 right-4 h-6 w-6 text-primary/20 group-hover:text-primary/30 transition-colors" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-bold">{testimonial.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {testimonial.position}, {testimonial.company}
+                  </p>
+                </div>
+              </div>
+              <p className="text-muted-foreground mb-4 line-clamp-4">
+                {testimonial.content}
+              </p>
+              <div className="flex justify-between items-center">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={cn(
+                        "w-4 h-4",
+                        i < testimonial.rating
+                          ? "text-yellow-400"
+                          : "text-gray-300",
+                      )}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="inline-block px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                  {testimonial.category}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Testimonials;

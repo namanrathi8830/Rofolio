@@ -1,0 +1,44 @@
+import React from "react";
+
+function Projects() {
+  return (
+    <div className="w-screen min-h-screen bg-white p-8">
+      <h1 className="text-4xl font-bold text-primary mb-8">Projects</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Project cards will go here */}
+        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
+          <h2 className="text-2xl font-semibold mb-3">Project 1</h2>
+          <p className="text-gray-700 mb-4">
+            Description of project 1 goes here. This is a placeholder for your
+            actual project content.
+          </p>
+          <a href="#" className="text-primary hover:underline">
+            View Details
+          </a>
+        </div>
+        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
+          <h2 className="text-2xl font-semibold mb-3">Project 2</h2>
+          <p className="text-gray-700 mb-4">
+            Description of project 2 goes here. This is a placeholder for your
+            actual project content.
+          </p>
+          <a href="#" className="text-primary hover:underline">
+            View Details
+          </a>
+        </div>
+        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
+          <h2 className="text-2xl font-semibold mb-3">Project 3</h2>
+          <p className="text-gray-700 mb-4">
+            Description of project 3 goes here. This is a placeholder for your
+            actual project content.
+          </p>
+          <a href="#" className="text-primary hover:underline">
+            View Details
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Projects;
