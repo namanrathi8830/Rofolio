@@ -1,9 +1,8 @@
 import OpenAI from "openai";
 
-// Initialize the OpenAI client with the API key
+// Initialize the OpenAI client with the API key from environment variables
 const openai = new OpenAI({
-  apiKey:
-    "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",
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true, // Allow client-side usage (for demo purposes)
 });
 
