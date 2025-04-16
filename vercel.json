@@ -2,6 +2,7 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/src/components/(.*\\.HTML)", "dest": "/src/components/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "github": {
