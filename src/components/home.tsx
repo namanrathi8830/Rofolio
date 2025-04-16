@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Spline from "@splinetool/react-spline";
 import VoiceControl from "./VoiceControl";
-import { Link } from "react-router-dom";
 
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -94,15 +93,14 @@ function Home() {
               { name: "Blog", path: "/blog" },
               { name: "Testimonials", path: "/testimonials" },
               { name: "Contact Me", path: "/contact" },
-              { name: "Test Page", path: "/test" },
             ].map((item) => (
-              <Link 
+              <a 
                 key={item.name} 
-                to={item.path} 
+                href={item.path} 
                 className="btn px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md transition-all"
               >
                 {item.name}
-              </Link>
+              </a>
             ))}
           </div>
         </>

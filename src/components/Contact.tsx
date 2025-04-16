@@ -527,11 +527,11 @@ const Contact: React.FC = () => {
                     onChange={handleChange}
                   className="w-full px-4 py-3 bg-[#0a1515] border border-[#2a3e3e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white input-3d"
                     placeholder=" "
-                />
+                  />
                 <label htmlFor="email" className="floating-label text-sm font-medium text-gray-400">
                   Email Address
                 </label>
-              </div>
+                </div>
               </div>
 
             <div className={cn(fadeInUpAnimation, animateWithDelay(3))} style={{ transform: 'translateZ(20px)' }}>
