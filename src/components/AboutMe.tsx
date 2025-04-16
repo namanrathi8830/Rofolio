@@ -4,9 +4,12 @@ const AboutMe: React.FC = () => {
   const [timestamp, setTimestamp] = useState(Date.now());
   const iframeRef = useRef<HTMLIFrameElement>(null);
   
+  // Define a direct URL to the Framer about page
+  const directFramerUrl = "https://rofolio.framer.website/about";
+  
   useEffect(() => {
     const handleLoad = () => {
-      console.log("AboutMe.HTML iframe loaded");
+      console.log("AboutMe iframe loaded");
       
       // Remove Framer badges when the iframe loads
       try {
@@ -81,21 +84,19 @@ const AboutMe: React.FC = () => {
   const refreshIframe = () => {
     setTimestamp(Date.now());
     if (iframeRef.current) {
-      const htmlPath = new URL('./AboutMe.HTML', import.meta.url).href;
-      const newSrc = `${htmlPath}?t=${Date.now()}`;
-      iframeRef.current.src = newSrc;
-      console.log("Refreshed iframe with URL:", newSrc);
+      iframeRef.current.src = `${directFramerUrl}?t=${Date.now()}`;
+      console.log("Refreshed iframe with URL:", iframeRef.current.src);
     }
   };
   
   // Build the source URL with a timestamp to prevent caching
-  const htmlPath = `${new URL('./AboutMe.HTML', import.meta.url).href}?t=${timestamp}`;
+  const iframeSrc = `${directFramerUrl}?t=${timestamp}`;
   
   return (
     <div className="about-me-container" style={{ width: '100%', height: '100vh', position: 'relative' }}>
       <iframe 
         ref={iframeRef}
-        src={htmlPath}
+        src={iframeSrc}
         title="About Me"
         style={{
           width: '100%',
