@@ -14,6 +14,7 @@ const Portfolio = lazy(() => import("./components/Portfolio"));
 const Blog = lazy(() => import("./components/Blog.tsx"));
 const Testimonials = lazy(() => import("./components/Testimonials"));
 const Contact = lazy(() => import("./components/Contact"));
+const TestPage = lazy(() => import("./components/TestPage"));
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/fallback" element={<RoboFallback />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
       </>
