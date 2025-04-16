@@ -1,14 +1,35 @@
 import OpenAI from "openai";
 
 // Initialize the OpenAI client with the API key from environment variables
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true, // Allow client-side usage (for demo purposes)
-});
+let openai: OpenAI | null = null;
+
+try {
+  // Only initialize OpenAI if API key is available
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  if (apiKey) {
+    openai = new OpenAI({
+      apiKey: apiKey,
+      dangerouslyAllowBrowser: true, // Allow client-side usage (for demo purposes)
+    });
+  } else {
+    console.warn("OpenAI API key is not provided. Voice assistant features will be limited.");
+  }
+} catch (error) {
+  console.error("Error initializing OpenAI client:", error);
+}
 
 // Maintain conversation context (limited to last 5 exchanges)
 const conversationHistory: Array<{ role: "user" | "assistant"; content: string }> = [];
 const MAX_HISTORY = 5;
+
+// Fallback responses when API key is not available
+const fallbackResponses = [
+  "I'm sorry, I can't process that request right now. The API key for my intelligence is not configured.",
+  "Voice assistant features are currently limited. Please check back later.",
+  "I'm not fully operational at the moment due to configuration issues.",
+  "I can't access my full capabilities right now. Please contact Naman for assistance.",
+  "My AI capabilities are currently offline. Please explore the portfolio manually.",
+];
 
 /**
  * Send a message to the OpenAI API and get a response
@@ -17,6 +38,12 @@ const MAX_HISTORY = 5;
  */
 export async function sendMessageToOpenAI(message: string): Promise<string> {
   try {
+    // If OpenAI client is not initialized, return a fallback response
+    if (!openai) {
+      const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+      return fallbackResponses[randomIndex];
+    }
+    
     // Add user message to history
     conversationHistory.push({ role: "user", content: message });
     
@@ -105,7 +132,10 @@ When asked about navigation, suggest the right section for specific information.
     return response;
   } catch (error) {
     console.error("Error communicating with OpenAI:", error);
-    return "I encountered an error processing your request. Please try again later.";
+    
+    // Return a fallback response if there's an error
+    const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+    return fallbackResponses[randomIndex];
   }
 }
 
