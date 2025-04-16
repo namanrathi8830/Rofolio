@@ -770,4 +770,13 @@ svg, path, circle, rect, line {
   pointer-events: none;
 }
 
+/* Custom glow effect */
+.glow-style {
+  box-shadow: 0 0 25px 5px rgba(59, 130, 246, 0.6);
+}
+
+.glow {
+  box-shadow: 0 0 25px 5px rgba(59, 130, 246, 0.6);
+}
+
 

@@ -43,8 +43,9 @@ const RoboFallback = () => {
         </p>
       </div>
 
-      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center flex-wrap gap-4 px-4 animate-fade-in">
+      <div className="flex flex-wrap gap-4 mt-8 justify-center">
         {[
+          "Home",
           "About Me",
           "Skills & Services",
           "Projects / Portfolio",
@@ -61,11 +62,7 @@ const RoboFallback = () => {
         ))}
       </div>
 
-      <style jsx>{`
-        .glow {
-          box-shadow: 0 0 25px 5px rgba(59, 130, 246, 0.6);
-        }
-      `}</style>
+      <div className="glow-style"></div>
     </div>
   );
 };
