@@ -1,10 +1,9 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/src/components/(.*\\.HTML)", "dest": "/src/components/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "github": {
     "silent": true
   },
