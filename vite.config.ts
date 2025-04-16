@@ -5,7 +5,7 @@ import { tempo } from "tempo-devtools/dist/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/",
+  base: "./",
   plugins: [
     react(),
     tempo(),
