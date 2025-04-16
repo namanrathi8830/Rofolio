@@ -1,8 +1,8 @@
 import { Suspense, lazy } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import routes from "tempo-routes";
-// Comment out the CustomCursor import until we have an OpenAI API key configured
-// import CustomCursor from "./components/CustomCursor";
+// Uncomment the CustomCursor import since we'll have an OpenAI API key configured
+import CustomCursor from "./components/CustomCursor";
 
 // Lazy load components for better performance
 const Home = lazy(() => import("./components/home"));
@@ -32,8 +32,8 @@ function App() {
       }
     >
       <>
-        {/* Comment out CustomCursor until we have a valid OpenAI API key */}
-        {/* <CustomCursor /> */}
+        {/* Uncomment CustomCursor since we now have a valid OpenAI API key */}
+        <CustomCursor />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutMe />} />
