@@ -1,339 +1,134 @@
-import { useState } from "react";
-import { cn } from "../lib/utils";
-import {
-  CheckCircle,
-  Award,
-  Briefcase,
-  Code,
-  Server,
-  Database,
-  Cpu,
-  Layers,
-  Users,
-  Brain,
-} from "lucide-react";
+import React, { useState, useRef, useEffect } from 'react';
 
-interface Skill {
-  name: string;
-  level: number; // 0-100
-  category: "frontend" | "backend" | "devops" | "other";
-}
-
-interface Service {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-interface Certificate {
-  title: string;
-  organization: string;
-  date: string;
-  icon?: string;
-}
-
-const SkillsAndServices = () => {
-  const [activeCategory, setActiveCategory] = useState<
-    "all" | "frontend" | "backend" | "devops" | "other"
-  >("all");
-  const [activeTab, setActiveTab] = useState<
-    "skills" | "services" | "certificates"
-  >("skills");
-
-  const skills: Skill[] = [
-    { name: "React", level: 90, category: "frontend" },
-    { name: "TypeScript", level: 85, category: "frontend" },
-    { name: "HTML/CSS", level: 95, category: "frontend" },
-    { name: "Tailwind CSS", level: 90, category: "frontend" },
-    { name: "Next.js", level: 80, category: "frontend" },
-    { name: "Node.js", level: 85, category: "backend" },
-    { name: "Express", level: 80, category: "backend" },
-    { name: "MongoDB", level: 75, category: "backend" },
-    { name: "PostgreSQL", level: 80, category: "backend" },
-    { name: "GraphQL", level: 70, category: "backend" },
-    { name: "Docker", level: 75, category: "devops" },
-    { name: "AWS", level: 70, category: "devops" },
-    { name: "CI/CD", level: 75, category: "devops" },
-    { name: "Git", level: 90, category: "devops" },
-    { name: "Python", level: 75, category: "other" },
-    { name: "UI/UX Design", level: 80, category: "other" },
-    { name: "Agile/Scrum", level: 85, category: "other" },
-    { name: "Problem Solving", level: 95, category: "other" },
-  ];
-
-  const services: Service[] = [
-    {
-      title: "Web Development",
-      description:
-        "Custom websites and web applications built with modern frameworks like React, Next.js, and TypeScript.",
-      icon: <Code className="w-10 h-10 text-primary" />,
-    },
-    {
-      title: "Backend Development",
-      description:
-        "Robust server-side solutions using Node.js, Express, and various database technologies.",
-      icon: <Server className="w-10 h-10 text-primary" />,
-    },
-    {
-      title: "Database Design",
-      description:
-        "Efficient database architecture and optimization for SQL and NoSQL databases.",
-      icon: <Database className="w-10 h-10 text-primary" />,
-    },
-    {
-      title: "DevOps Solutions",
-      description:
-        "Containerization, CI/CD pipeline setup, and cloud infrastructure management.",
-      icon: <Cpu className="w-10 h-10 text-primary" />,
-    },
-    {
-      title: "Full Stack Development",
-      description:
-        "End-to-end application development from frontend interfaces to backend systems.",
-      icon: <Layers className="w-10 h-10 text-primary" />,
-    },
-    {
-      title: "Technical Consultation",
-      description:
-        "Expert advice on technology stack selection, architecture design, and best practices.",
-      icon: <Briefcase className="w-10 h-10 text-primary" />,
-    },
-  ];
-
-  const certificates: Certificate[] = [
-    {
-      title: "AWS Certified Developer",
-      organization: "Amazon Web Services",
-      date: "2023",
-    },
-    {
-      title: "Professional Scrum Master I",
-      organization: "Scrum.org",
-      date: "2022",
-    },
-    {
-      title: "MongoDB Certified Developer",
-      organization: "MongoDB University",
-      date: "2021",
-    },
-    {
-      title: "React Advanced Concepts",
-      organization: "Frontend Masters",
-      date: "2021",
-    },
-  ];
-
-  const filteredSkills =
-    activeCategory === "all"
-      ? skills
-      : skills.filter((skill) => skill.category === activeCategory);
-
+const SkillsAndServices: React.FC = () => {
+  const [timestamp, setTimestamp] = useState(Date.now());
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  useEffect(() => {
+    const handleLoad = () => {
+      console.log("SkillsAndServices.HTML iframe loaded");
+      
+      // Remove Framer badges when the iframe loads
+      try {
+        const iframeWindow = iframeRef.current?.contentWindow;
+        if (iframeWindow && iframeWindow.document) {
+          // Function to remove badges
+          const removeBadges = () => {
+            try {
+              // Try to find and remove badge containers
+              const badgeContainers = iframeWindow.document.querySelectorAll('[id*="framer-badge"], [class*="framer-badge"], #__framer-badge-container');
+              
+              badgeContainers.forEach(badge => {
+                if (badge && badge.parentNode) {
+                  badge.parentNode.removeChild(badge);
+                  console.log("Removed a Framer badge");
+                }
+              });
+              
+              // Also apply CSS to hide any badges that might be added dynamically
+              const style = iframeWindow.document.createElement('style');
+              style.textContent = `
+                #__framer-badge-container, 
+                [id*="framer-badge"], 
+                [class*="framer-badge"],
+                [data-framer-badge-container] {
+                  display: none !important;
+                  opacity: 0 !important;
+                  visibility: hidden !important;
+                  pointer-events: none !important;
+                }
+              `;
+              iframeWindow.document.head.appendChild(style);
+            } catch (e) {
+              console.error("Error removing badges:", e);
+            }
+          };
+          
+          // Remove badges immediately
+          removeBadges();
+          
+          // Also set up an observer to remove badges that might be added dynamically
+          const observer = new MutationObserver(() => {
+            removeBadges();
+          });
+          
+          // Start observing
+          observer.observe(iframeWindow.document.body, {
+            childList: true,
+            subtree: true
+          });
+          
+          // Clean up function
+          return () => {
+            observer.disconnect();
+          };
+        }
+      } catch (e) {
+        console.error("Error accessing iframe content:", e);
+      }
+    };
+    
+    if (iframeRef.current) {
+      iframeRef.current.addEventListener('load', handleLoad);
+      
+      return () => {
+        iframeRef.current?.removeEventListener('load', handleLoad);
+      };
+    }
+  }, [timestamp]);
+  
+  // Function to force a refresh of the iframe
+  const refreshIframe = () => {
+    setTimestamp(Date.now());
+    if (iframeRef.current) {
+      const htmlPath = new URL('./SkillsAndServices.HTML', import.meta.url).href;
+      const newSrc = `${htmlPath}?t=${Date.now()}`;
+      iframeRef.current.src = newSrc;
+      console.log("Refreshed iframe with URL:", newSrc);
+    }
+  };
+  
+  // Build the source URL with a timestamp to prevent caching
+  const htmlPath = `${new URL('./SkillsAndServices.HTML', import.meta.url).href}?t=${timestamp}`;
+  
   return (
-    <section
-      id="skills"
-      className="w-full min-h-screen bg-muted py-20 px-4 md:px-8 lg:px-16"
-    >
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center">
-          Skills & Services
-        </h2>
-
-        {/* Tabs */}
-        <div className="mb-12">
-          <div className="flex justify-center border-b border-border">
-            <button
-              onClick={() => setActiveTab("skills")}
-              className={cn(
-                "px-6 py-3 font-medium",
-                activeTab === "skills"
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-muted-foreground",
-              )}
-            >
-              Skills
-            </button>
-            <button
-              onClick={() => setActiveTab("services")}
-              className={cn(
-                "px-6 py-3 font-medium",
-                activeTab === "services"
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-muted-foreground",
-              )}
-            >
-              Services
-            </button>
-            <button
-              onClick={() => setActiveTab("certificates")}
-              className={cn(
-                "px-6 py-3 font-medium",
-                activeTab === "certificates"
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-muted-foreground",
-              )}
-            >
-              Certificates
-            </button>
-          </div>
-        </div>
-
-        {/* Skills Content */}
-        {activeTab === "skills" && (
-          <div>
-            {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              <button
-                onClick={() => setActiveCategory("all")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                  activeCategory === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card hover:bg-card/80",
-                )}
-              >
-                All Skills
-              </button>
-              <button
-                onClick={() => setActiveCategory("frontend")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                  activeCategory === "frontend"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card hover:bg-card/80",
-                )}
-              >
-                Frontend
-              </button>
-              <button
-                onClick={() => setActiveCategory("backend")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                  activeCategory === "backend"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card hover:bg-card/80",
-                )}
-              >
-                Backend
-              </button>
-              <button
-                onClick={() => setActiveCategory("devops")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                  activeCategory === "devops"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card hover:bg-card/80",
-                )}
-              >
-                DevOps
-              </button>
-              <button
-                onClick={() => setActiveCategory("other")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                  activeCategory === "other"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card hover:bg-card/80",
-                )}
-              >
-                Other
-              </button>
-            </div>
-
-            {/* Skills Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredSkills.map((skill, index) => (
-                <div
-                  key={index}
-                  className="bg-card rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">{skill.name}</h4>
-                    <span className="text-sm text-muted-foreground">
-                      {skill.level}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2.5">
-                    <div
-                      className="bg-primary h-2.5 rounded-full transition-all duration-500 ease-out"
-                      style={{ width: `${skill.level}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Soft Skills */}
-            <div className="mt-12">
-              <h3 className="text-2xl font-bold mb-6 text-center">
-                Soft Skills
-              </h3>
-              <div className="flex flex-wrap justify-center gap-3">
-                {[
-                  "Communication",
-                  "Leadership",
-                  "Problem Solving",
-                  "Teamwork",
-                  "Time Management",
-                  "Adaptability",
-                  "Creativity",
-                  "Critical Thinking",
-                ].map((skill, index) => (
-                  <div
-                    key={index}
-                    className="bg-card px-4 py-2 rounded-full flex items-center gap-2"
-                  >
-                    <CheckCircle className="w-4 h-4 text-primary" />
-                    <span>{skill}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Services Content */}
-        {activeTab === "services" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="mb-4">{service.icon}</div>
-                <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                <p className="text-muted-foreground">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Certificates Content */}
-        {activeTab === "certificates" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {certificates.map((cert, index) => (
-              <div
-                key={index}
-                className="bg-card rounded-xl p-6 shadow-md flex items-start gap-4"
-              >
-                <div className="shrink-0">
-                  <Award className="w-12 h-12 text-primary" />
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold mb-1">{cert.title}</h4>
-                  <p className="text-muted-foreground mb-2">
-                    {cert.organization}
-                  </p>
-                  <div className="inline-block bg-muted px-3 py-1 rounded-full text-xs font-medium">
-                    {cert.date}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+    <div className="skills-services-container" style={{ width: '100%', height: '100vh', position: 'relative' }}>
+      <iframe 
+        ref={iframeRef}
+        src={htmlPath}
+        title="Skills and Services"
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          overflow: 'hidden'
+        }}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      />
+      
+      <button 
+        onClick={refreshIframe}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          zIndex: 1000,
+          padding: '5px 10px',
+          background: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          opacity: 0.3,
+          transition: 'opacity 0.3s'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+        onMouseOut={(e) => e.currentTarget.style.opacity = '0.3'}
+      >
+        Refresh
+      </button>
+    </div>
   );
 };
 
-export default SkillsAndServices;
+export default SkillsAndServices; 

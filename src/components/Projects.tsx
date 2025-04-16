@@ -1,44 +1,134 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from 'react';
 
-function Projects() {
+const Projects: React.FC = () => {
+  const [timestamp, setTimestamp] = useState(Date.now());
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  useEffect(() => {
+    const handleLoad = () => {
+      console.log("Projects.HTML iframe loaded");
+      
+      // Remove Framer badges when the iframe loads
+      try {
+        const iframeWindow = iframeRef.current?.contentWindow;
+        if (iframeWindow && iframeWindow.document) {
+          // Function to remove badges
+          const removeBadges = () => {
+            try {
+              // Try to find and remove badge containers
+              const badgeContainers = iframeWindow.document.querySelectorAll('[id*="framer-badge"], [class*="framer-badge"], #__framer-badge-container');
+              
+              badgeContainers.forEach(badge => {
+                if (badge && badge.parentNode) {
+                  badge.parentNode.removeChild(badge);
+                  console.log("Removed a Framer badge");
+                }
+              });
+              
+              // Also apply CSS to hide any badges that might be added dynamically
+              const style = iframeWindow.document.createElement('style');
+              style.textContent = `
+                #__framer-badge-container, 
+                [id*="framer-badge"], 
+                [class*="framer-badge"],
+                [data-framer-badge-container] {
+                  display: none !important;
+                  opacity: 0 !important;
+                  visibility: hidden !important;
+                  pointer-events: none !important;
+                }
+              `;
+              iframeWindow.document.head.appendChild(style);
+            } catch (e) {
+              console.error("Error removing badges:", e);
+            }
+          };
+          
+          // Remove badges immediately
+          removeBadges();
+          
+          // Also set up an observer to remove badges that might be added dynamically
+          const observer = new MutationObserver(() => {
+            removeBadges();
+          });
+          
+          // Start observing
+          observer.observe(iframeWindow.document.body, {
+            childList: true,
+            subtree: true
+          });
+          
+          // Clean up function
+          return () => {
+            observer.disconnect();
+          };
+        }
+      } catch (e) {
+        console.error("Error accessing iframe content:", e);
+      }
+    };
+    
+    if (iframeRef.current) {
+      iframeRef.current.addEventListener('load', handleLoad);
+      
+      return () => {
+        iframeRef.current?.removeEventListener('load', handleLoad);
+      };
+    }
+  }, [timestamp]);
+  
+  // Function to force a refresh of the iframe
+  const refreshIframe = () => {
+    setTimestamp(Date.now());
+    if (iframeRef.current) {
+      const htmlPath = new URL('./Projects.HTML', import.meta.url).href;
+      const newSrc = `${htmlPath}?t=${Date.now()}`;
+      iframeRef.current.src = newSrc;
+      console.log("Refreshed iframe with URL:", newSrc);
+    }
+  };
+  
+  // Build the source URL with a timestamp to prevent caching
+  const htmlPath = `${new URL('./Projects.HTML', import.meta.url).href}?t=${timestamp}`;
+  
   return (
-    <div className="w-screen min-h-screen bg-white p-8">
-      <h1 className="text-4xl font-bold text-primary mb-8">Projects</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Project cards will go here */}
-        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
-          <h2 className="text-2xl font-semibold mb-3">Project 1</h2>
-          <p className="text-gray-700 mb-4">
-            Description of project 1 goes here. This is a placeholder for your
-            actual project content.
-          </p>
-          <a href="#" className="text-primary hover:underline">
-            View Details
-          </a>
-        </div>
-        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
-          <h2 className="text-2xl font-semibold mb-3">Project 2</h2>
-          <p className="text-gray-700 mb-4">
-            Description of project 2 goes here. This is a placeholder for your
-            actual project content.
-          </p>
-          <a href="#" className="text-primary hover:underline">
-            View Details
-          </a>
-        </div>
-        <div className="bg-gray-100 rounded-lg p-6 shadow-md">
-          <h2 className="text-2xl font-semibold mb-3">Project 3</h2>
-          <p className="text-gray-700 mb-4">
-            Description of project 3 goes here. This is a placeholder for your
-            actual project content.
-          </p>
-          <a href="#" className="text-primary hover:underline">
-            View Details
-          </a>
-        </div>
-      </div>
+    <div className="projects-container" style={{ width: '100%', height: '100vh', position: 'relative' }}>
+      <iframe 
+        ref={iframeRef}
+        src={htmlPath}
+        title="Projects"
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          overflow: 'hidden'
+        }}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      />
+      
+      <button 
+        onClick={refreshIframe}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          zIndex: 1000,
+          padding: '5px 10px',
+          background: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          opacity: 0.3,
+          transition: 'opacity 0.3s'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+        onMouseOut={(e) => e.currentTarget.style.opacity = '0.3'}
+      >
+        Refresh
+      </button>
     </div>
   );
-}
+};
 
-export default Projects;
+export default Projects; 

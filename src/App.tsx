@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import routes from "tempo-routes";
+import CustomCursor from "./components/CustomCursor";
 
 // Lazy load components for better performance
 const Home = lazy(() => import("./components/home"));
@@ -9,7 +10,7 @@ const AboutMe = lazy(() => import("./components/AboutMe"));
 const SkillsAndServices = lazy(() => import("./components/SkillsAndServices"));
 const Projects = lazy(() => import("./components/Projects"));
 const Portfolio = lazy(() => import("./components/Portfolio"));
-const Blog = lazy(() => import("./components/Blog"));
+const Blog = lazy(() => import("./components/Blog.tsx"));
 const Testimonials = lazy(() => import("./components/Testimonials"));
 const Contact = lazy(() => import("./components/Contact"));
 
@@ -30,6 +31,7 @@ function App() {
       }
     >
       <>
+        <CustomCursor />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutMe />} />
