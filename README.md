@@ -50,18 +50,6 @@
    yarn install
    ```
 
-3. Create a `.env` file in the root directory with your EmailJS credentials:
-   ```
-   VITE_EMAILJS_SERVICE_ID=your_service_id
-   VITE_EMAILJS_TEMPLATE_ID=your_template_id
-   VITE_EMAILJS_PUBLIC_KEY=your_public_key
-   ```
-
-4. Add your CV/Resume to the public assets folder:
-   ```
-   public/assets/Naman_Rathi_CV.pdf
-   ```
-
 ### Development
 
 Start the development server:
@@ -86,20 +74,16 @@ The build output will be in the `dist` folder.
 
 ## 🌐 Deployment
 
-This project is optimized for deployment on Vercel:
+This project is deployed on Vercel:
 
-1. Push your code to a GitHub repository
-2. Sign up on [Vercel](https://vercel.com)
-3. Import your GitHub repository
-4. Configure settings and deploy
-5. Connect your custom domain (rofolio.site)
+1. Connected to GitHub repository
+2. Custom domain configured (rofolio.site)
 
 ## 📂 Project Structure
 
 ```
 Rofolio/
 ├── public/              # Static assets
-│   └── assets/          # CV and other resources
 ├── src/                 # Source code
 │   ├── components/      # React components
 │   │   ├── About.tsx    
@@ -115,16 +99,6 @@ Rofolio/
 ├── tsconfig.json        # TypeScript configuration
 └── vite.config.ts       # Vite configuration
 ```
-
-## 🎨 Customization
-
-To customize this portfolio for your own use:
-
-1. Update personal information in the component files
-2. Replace the Google Maps location in `Contact.tsx`
-3. Add your own CV/Resume to the assets folder
-4. Modify the projects section with your own work
-5. Customize colors in the CSS/Tailwind configuration
 
 ## 📝 License
 
