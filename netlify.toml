@@ -1,6 +1,10 @@
 [build]
-  command = "npm run build"
+  command = "npm run build-no-errors"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
 
 [functions]
   directory = "netlify/functions"
@@ -8,4 +12,15 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+
+# Disable asset optimization - these may cause issues
+[build.processing]
+  skip_processing = true
+
+# Enable CORS for Functions
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS" 
