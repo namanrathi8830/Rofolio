@@ -9,14 +9,26 @@
 [functions]
   directory = "netlify/functions"
 
+# Explicitly disable all post-processing
+[build.processing]
+  skip_processing = true
+
+# Disable asset optimization
+[build.processing.css]
+  bundle = false
+  minify = false
+[build.processing.js]
+  bundle = false
+  minify = false
+[build.processing.html]
+  pretty_urls = false
+[build.processing.images]
+  compress = false
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Disable asset optimization - these may cause issues
-[build.processing]
-  skip_processing = true
 
 # Enable CORS for Functions
 [[headers]]
