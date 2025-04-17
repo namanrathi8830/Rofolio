@@ -5,9 +5,10 @@ import { tempo } from "tempo-devtools/dist/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
+  base: '/',
   optimizeDeps: {
-    entries: ["src/main.tsx", "src/tempobook/**/*"],
+    entries: ["./index.js", "src/main.tsx"],
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
   plugins: [
     react(),
@@ -26,12 +27,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false,
+    minify: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
       },
       output: {
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]',
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom'],
           'spline': ['@splinetool/react-spline', '@splinetool/runtime'],
