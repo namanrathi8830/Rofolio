@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import Spline from "@splinetool/react-spline";
 import VoiceControl from "./VoiceControl";
-import ErrorBoundary from "./ErrorBoundary";
 
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [botResponse, setBotResponse] = useState<string>("");
   const [showBotMessage, setShowBotMessage] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
-  const [splineError, setSplineError] = useState(false);
 
   useEffect(() => {
     // Simulate loading time for the 3D scene
@@ -40,22 +38,6 @@ function Home() {
     return () => clearTimeout(messageTimeout);
   };
 
-  // Create a fallback UI for Spline errors
-  const splineFallback = (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100">
-      <div className="text-center p-8">
-        <h2 className="text-2xl font-bold mb-4">Unable to load 3D experience</h2>
-        <p className="mb-4">Please try refreshing the page or visit on a different device.</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-        >
-          Refresh Page
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="w-screen h-screen bg-white flex flex-col items-center justify-center relative overflow-hidden">
       {isLoading ? (
@@ -68,20 +50,10 @@ function Home() {
         <>
           {/* 3D Scene wrapper with proper positioning */}
           <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <ErrorBoundary fallback={splineFallback}>
-              {splineError ? (
-                splineFallback
-              ) : (
-                <Spline
-                  scene="https://prod.spline.design/gThPz1iTw0hN4kdk/scene.splinecode"
-                  className="w-full h-full"
-                  onLoad={(spline) => {
-                    console.log('Spline scene loaded successfully');
-                    // You could interact with the Spline API here if needed
-                  }}
-                />
-              )}
-            </ErrorBoundary>
+            <Spline
+              scene="https://prod.spline.design/gThPz1iTw0hN4kdk/scene.splinecode"
+              className="w-full h-full"
+            />
           </div>
 
           {/* Bot response message bubble positioned to the side */}
@@ -98,7 +70,7 @@ function Home() {
           {/* Voice control component with animation completion prop */}
           <VoiceControl 
             onBotResponse={handleBotResponse} 
-            animationComplete={animationComplete && !splineError}
+            animationComplete={animationComplete}
           />
 
           {/* Dynamic instructions based on context */}

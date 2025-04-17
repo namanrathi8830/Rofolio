@@ -5,10 +5,9 @@ import { tempo } from "tempo-devtools/dist/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
+  base: process.env.NODE_ENV === "development" ? "/" : process.env.VITE_BASE_PATH || "/",
   optimizeDeps: {
-    entries: ["./index.js", "src/main.tsx"],
-    include: ['react', 'react-dom', 'react-router-dom'],
+    entries: ["src/main.tsx", "src/tempobook/**/*"],
   },
   plugins: [
     react(),
@@ -21,31 +20,20 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
+    // @ts-ignore
+    allowedHosts: true,
   },
-  assetsInclude: ['**/*.HTML', '**/*.html'],
+  assetsInclude: ['**/*.HTML'],
   build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-    sourcemap: false,
-    minify: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-      },
-      output: {
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash].[ext]',
-        manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'spline': ['@splinetool/react-spline', '@splinetool/runtime'],
-        },
+        aboutMe: path.resolve(__dirname, 'src/components/AboutMe.HTML'),
+        blog: path.resolve(__dirname, 'src/components/Blog.HTML'),
+        testimonials: path.resolve(__dirname, 'src/components/Testimonials.HTML'),
+        skillsAndServices: path.resolve(__dirname, 'src/components/SkillsAndServices.HTML'),
+        projects: path.resolve(__dirname, 'src/components/Projects.HTML'),
       },
     },
-    commonjsOptions: {
-      include: [/node_modules/],
-      extensions: ['.js', '.cjs'],
-    }
   },
 });

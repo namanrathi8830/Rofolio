@@ -1,75 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Naman Rathi - Full Stack Developer & Data Scientist Portfolio">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>Naman Rathi | Portfolio</title>
-  <!-- Pre-load styles -->
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: white;
-    }
-    #root {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .loading {
-      text-align: center;
-    }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(79, 70, 229, 0.2);
-      border-radius: 50%;
-      border-top-color: #4f46e5;
-      margin: 0 auto 20px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-  <div id="root">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading Rofolio...</p>
-    </div>
-  </div>
-  
-  <!-- Directly include bundle scripts -->
-  <script type="module">
-    // Simple script to load the app
-    window.addEventListener('DOMContentLoaded', () => {
-      // Dynamically load the main app script
-      try {
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = '/assets/main.js';
-        document.body.appendChild(script);
-        
-        console.log('Loading Rofolio app...');
-      } catch (err) {
-        console.error('Error loading app:', err);
-        document.getElementById('root').innerHTML = `
-          <div style="text-align:center;padding:20px;">
-            <h1>Something went wrong</h1>
-            <p>Unable to load the application. Please try refreshing the page.</p>
-            <button onclick="window.location.reload()">Refresh</button>
-          </div>
-        `;
-      }
-    });
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+    <script type="module" crossorigin src="/assets/main-B9Ftg9Ri.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/main-DenjDo2A.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://api.tempo.new/proxy-asset?url=https://storage.googleapis.com/tempo-public-assets/error-handling.js"></script>
+  </body>
 </html>
