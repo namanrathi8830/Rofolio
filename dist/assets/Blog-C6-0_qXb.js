@@ -1,0 +1,1 @@
+import{j as e}from"./main-C43Zwy6u.js";const o=()=>{const t=new URL(""+new URL("Blog-Cs8z-1pc.HTML",import.meta.url).href,import.meta.url).href;return e.jsx("div",{className:"blog-container",style:{width:"100%",height:"100vh"},children:e.jsx("iframe",{src:t,title:"Blog",style:{width:"100%",height:"100%",border:"none",overflow:"hidden"}})})};export{o as default};

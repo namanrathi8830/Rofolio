@@ -1,1 +1,0 @@
-import{j as t}from"./main-B9Ftg9Ri.js";const i=()=>{const e=new URL("/assets/Testimonials-Cmwu8TlN.HTML",import.meta.url).href;return t.jsx("div",{className:"testimonials-container",style:{width:"100%",height:"100vh"},children:t.jsx("iframe",{src:e,title:"Testimonials",style:{width:"100%",height:"100%",border:"none",overflow:"hidden"}})})};export{i as default};
