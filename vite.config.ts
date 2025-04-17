@@ -22,17 +22,25 @@ export default defineConfig({
   server: {
     host: true,
   },
-  assetsInclude: ['**/*.HTML'],
+  assetsInclude: ['**/*.HTML', '**/*.html'],
   build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-        aboutMe: path.resolve(__dirname, 'src/components/AboutMe.HTML'),
-        blog: path.resolve(__dirname, 'src/components/Blog.HTML'),
-        testimonials: path.resolve(__dirname, 'src/components/Testimonials.HTML'),
-        skillsAndServices: path.resolve(__dirname, 'src/components/SkillsAndServices.HTML'),
-        projects: path.resolve(__dirname, 'src/components/Projects.HTML'),
+      },
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'spline': ['@splinetool/react-spline', '@splinetool/runtime'],
+        },
       },
     },
+    commonjsOptions: {
+      include: [/node_modules/],
+      extensions: ['.js', '.cjs'],
+    }
   },
 });

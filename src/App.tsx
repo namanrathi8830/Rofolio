@@ -3,14 +3,14 @@ import { useRoutes, Routes, Route } from "react-router-dom";
 import routes from "tempo-routes";
 import CustomCursor from "./components/CustomCursor";
 
-// Lazy load components for better performance
+// Lazy load components for better performance - keeping correct case from filesystem
 const Home = lazy(() => import("./components/home"));
 const RoboFallback = lazy(() => import("./components/RoboFallback"));
 const AboutMe = lazy(() => import("./components/AboutMe"));
 const SkillsAndServices = lazy(() => import("./components/SkillsAndServices"));
 const Projects = lazy(() => import("./components/Projects"));
 const Portfolio = lazy(() => import("./components/Portfolio"));
-const Blog = lazy(() => import("./components/Blog.tsx"));
+const Blog = lazy(() => import("./components/Blog"));
 const Testimonials = lazy(() => import("./components/Testimonials"));
 const Contact = lazy(() => import("./components/Contact"));
 

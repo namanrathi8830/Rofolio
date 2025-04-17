@@ -1,17 +1,11 @@
 import OpenAI from "openai";
 
-// Initialize the OpenAI client with the API key from environment variables
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true, // Allow client-side usage (for demo purposes)
-});
-
 // Maintain conversation context (limited to last 5 exchanges)
 const conversationHistory: Array<{ role: "user" | "assistant"; content: string }> = [];
 const MAX_HISTORY = 5;
 
 /**
- * Send a message to the OpenAI API and get a response
+ * Send a message to the OpenAI API via our serverless function
  * @param message The user's message
  * @returns The AI's response
  */
@@ -23,12 +17,45 @@ export async function sendMessageToOpenAI(message: string): Promise<string> {
     // Keep only recent messages to avoid token limits
     const recentHistory = conversationHistory.slice(-MAX_HISTORY * 2);
     
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content:
-            `I am Nexbot, an AI assistant on Naman Rathi's portfolio. I represent Naman with these facts:
+    // Use the serverless function in production, fallback to direct API in development
+    if (import.meta.env.PROD) {
+      // Call our Netlify serverless function
+      const response = await fetch('/.netlify/functions/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'sendMessage',
+          message: message,
+          history: recentHistory,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const aiResponse = data.text || "I could not process your request.";
+      
+      // Add assistant response to history
+      conversationHistory.push({ role: "assistant", content: aiResponse });
+      
+      return aiResponse;
+    } else {
+      // Direct API call for development only
+      const openai = new OpenAI({
+        apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true, // Allow client-side usage in development only
+      });
+      
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content:
+              `I am Nexbot, an AI assistant on Naman Rathi's portfolio. I represent Naman with these facts:
 
 PROFILE: Naman Rathi, Computer Science student at RNS Institute of Technology (2022-2026), specializing in Data Science and AI. CGPA: 7.30/10.
 
@@ -87,22 +114,23 @@ COMMUNICATION STYLE:
 - Highlight Naman's strengths in data science and web development
 
 When asked about navigation, suggest the right section for specific information.`,
-        },
-        ...recentHistory,
-      ],
-      model: "gpt-3.5-turbo",
-      max_tokens: 150,
-      temperature: 0.7,
-      presence_penalty: 0.6,
-      frequency_penalty: 0.3,
-    });
+          },
+          ...recentHistory,
+        ],
+        model: "gpt-3.5-turbo",
+        max_tokens: 150,
+        temperature: 0.7,
+        presence_penalty: 0.6,
+        frequency_penalty: 0.3,
+      });
 
-    const response = completion.choices[0]?.message?.content || "I could not process your request.";
-    
-    // Add assistant response to history
-    conversationHistory.push({ role: "assistant", content: response });
+      const response = completion.choices[0]?.message?.content || "I could not process your request.";
+      
+      // Add assistant response to history
+      conversationHistory.push({ role: "assistant", content: response });
 
-    return response;
+      return response;
+    }
   } catch (error) {
     console.error("Error communicating with OpenAI:", error);
     return "I encountered an error processing your request. Please try again later.";
@@ -143,8 +171,53 @@ export const speakWithRobotVoice = async (text: string) => {
   const savedVolume = localStorage.getItem('voiceVolume');
   const volume = savedVolume ? parseInt(savedVolume) / 100 : 0.5;
   
+  try {
+    if (import.meta.env.PROD) {
+      // In production, use the serverless function
+      try {
+        const response = await fetch('/.netlify/functions/openai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            action: 'generateSpeech', 
+            message: processedText 
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Speech generation failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.audio) {
+          // Play the audio from base64
+          const audio = new Audio(`data:audio/mpeg;base64,${data.audio}`);
+          audio.volume = volume;
+          await audio.play();
+          return;
+        } else {
+          // Fallback to browser speech if the serverless response doesn't include audio
+          fallbackToLocalSpeech(processedText, volume);
+        }
+      } catch (error) {
+        console.error("Error with serverless speech:", error);
+        // Fallback to browser speech if the serverless call fails
+        fallbackToLocalSpeech(processedText, volume);
+      }
+    } else {
+      // In development, use browser's speech synthesis
+      fallbackToLocalSpeech(processedText, volume);
+    }
+  } catch (error) {
+    console.error("Error generating speech:", error);
+  }
+};
+
+// Helper function to use browser's speech synthesis as a fallback
+const fallbackToLocalSpeech = async (text: string, volume: number) => {
   // Create a SpeechSynthesisUtterance with English voice
-  const utterance = new SpeechSynthesisUtterance(processedText);
+  const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';
   utterance.rate = 0.9;
   utterance.volume = volume;
@@ -169,7 +242,7 @@ export const speakWithRobotVoice = async (text: string) => {
   }
   
   // Log that we're speaking
-  console.log("Speaking with volume:", volume, "Text:", processedText.substring(0, 50) + "...");
+  console.log("Speaking with volume:", volume, "Text:", text.substring(0, 50) + "...");
   
   // Speak the text
   window.speechSynthesis.speak(utterance);
