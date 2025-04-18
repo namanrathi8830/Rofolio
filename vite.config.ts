@@ -2,6 +2,7 @@ import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { tempo } from "tempo-devtools/dist/vite";
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,16 +13,20 @@ export default defineConfig({
   plugins: [
     react(),
     tempo(),
+    basicSsl()
   ],
   resolve: {
     preserveSymlinks: true,
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@model": "/Users/namanrathi946/Rofolio/node_modules/tempo-model/dist",
     },
   },
   server: {
-    // @ts-ignore
-    allowedHosts: true,
+    host: '0.0.0.0',
+    https: {
+      // You can also provide specific keys/certs if needed
+    },
   },
   assetsInclude: ['**/*.HTML'],
   build: {
