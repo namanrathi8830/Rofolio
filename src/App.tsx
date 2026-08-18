@@ -1,6 +1,5 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
-import routes from "tempo-routes";
 import CustomCursor from "./components/CustomCursor";
 
 // Lazy load components for better performance
@@ -15,6 +14,15 @@ const Testimonials = lazy(() => import("./components/Testimonials"));
 const Contact = lazy(() => import("./components/Contact"));
 
 function App() {
+  // Only render tempo routes in development
+  const [tempoRoutes, setTempoRoutes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      import("tempo-routes").then((m) => setTempoRoutes(m.default)).catch(() => {});
+    }
+  }, []);
+
   return (
     <Suspense
       fallback={
@@ -43,7 +51,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/fallback" element={<RoboFallback />} />
         </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        {import.meta.env.DEV && tempoRoutes.length > 0 && useRoutes(tempoRoutes)}
       </>
     </Suspense>
   );
