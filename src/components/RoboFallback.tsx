@@ -61,7 +61,7 @@ const RoboFallback = () => {
         ))}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .glow {
           box-shadow: 0 0 25px 5px rgba(59, 130, 246, 0.6);
         }
