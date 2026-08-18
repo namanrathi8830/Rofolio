@@ -22,5 +22,18 @@ export default defineConfig({
   server: {
     // @ts-ignore
     allowedHosts: true,
-  }
+  },
+  assetsInclude: ['**/*.HTML'],
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        aboutMe: path.resolve(__dirname, 'src/components/AboutMe.HTML'),
+        blog: path.resolve(__dirname, 'src/components/Blog.HTML'),
+        testimonials: path.resolve(__dirname, 'src/components/Testimonials.HTML'),
+        skillsAndServices: path.resolve(__dirname, 'src/components/SkillsAndServices.HTML'),
+        projects: path.resolve(__dirname, 'src/components/Projects.HTML'),
+      },
+    },
+  },
 });
