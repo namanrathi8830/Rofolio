@@ -3,10 +3,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { tempo } from "tempo-devtools/dist/vite";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isDev = mode === "development";
-  
+
   return {
     base: isDev ? "/" : process.env.VITE_BASE_PATH || "/",
     optimizeDeps: {
@@ -16,27 +15,27 @@ export default defineConfig(({ mode }) => {
       react(),
       isDev && tempo(),
     ].filter(Boolean),
-  resolve: {
-    preserveSymlinks: true,
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  server: {
-    // @ts-ignore
-    allowedHosts: true,
-  },
-  assetsInclude: ['**/*.HTML'],
-  build: {
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-        aboutMe: path.resolve(__dirname, 'src/components/AboutMe.HTML'),
-        blog: path.resolve(__dirname, 'src/components/Blog.HTML'),
-        testimonials: path.resolve(__dirname, 'src/components/Testimonials.HTML'),
-        skillsAndServices: path.resolve(__dirname, 'src/components/SkillsAndServices.HTML'),
-        projects: path.resolve(__dirname, 'src/components/Projects.HTML'),
+    resolve: {
+      preserveSymlinks: true,
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-  },
+    server: {
+      allowedHosts: true,
+    },
+    assetsInclude: ['**/*.HTML'],
+    build: {
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          aboutMe: path.resolve(__dirname, 'src/components/AboutMe.HTML'),
+          blog: path.resolve(__dirname, 'src/components/Blog.HTML'),
+          testimonials: path.resolve(__dirname, 'src/components/Testimonials.HTML'),
+          skillsAndServices: path.resolve(__dirname, 'src/components/SkillsAndServices.HTML'),
+          projects: path.resolve(__dirname, 'src/components/Projects.HTML'),
+        },
+      },
+    },
+  };
 });

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, Part } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
 
@@ -18,7 +18,7 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-const conversationHistory: Array<{ role: "user" | "model"; parts: string[] }> = [];
+const conversationHistory: Array<{ role: "user" | "model"; parts: Part[] }> = [];
 const MAX_HISTORY = 5;
 
 const SYSTEM_PROMPT = `I am Nexbot, an AI assistant on Naman Rathi's portfolio. I represent Naman with these facts:
@@ -83,14 +83,14 @@ When asked about navigation, suggest the right section for specific information.
 
 export async function sendMessageToGemini(message: string): Promise<string> {
   try {
-    conversationHistory.push({ role: "user", parts: [message] });
+    conversationHistory.push({ role: "user", parts: [{ text: message }] });
     
     const recentHistory = conversationHistory.slice(-MAX_HISTORY * 2);
     
     const chat = model.startChat({
       history: [
-        { role: "user", parts: [SYSTEM_PROMPT] },
-        { role: "model", parts: ["Understood. I am Nexbot, Naman's AI assistant. How can I help you?"] },
+        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+        { role: "model", parts: [{ text: "Understood. I am Nexbot, Naman's AI assistant. How can I help you?" }] },
         ...recentHistory,
       ],
     });
@@ -98,7 +98,7 @@ export async function sendMessageToGemini(message: string): Promise<string> {
     const result = await chat.sendMessage(message);
     const response = result.response.text() || "I could not process your request.";
     
-    conversationHistory.push({ role: "model", parts: [response] });
+    conversationHistory.push({ role: "model", parts: [{ text: response }] });
     
     return response;
   } catch (error) {
