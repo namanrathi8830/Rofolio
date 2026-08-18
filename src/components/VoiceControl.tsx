@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { sendMessageToOpenAI, speakWithRobotVoice, speakHindiWithRobotVoice } from "../utils/openai";
+import { sendMessageToGemini, speakWithRobotVoice, speakHindiWithRobotVoice } from "../utils/gemini";
 import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 
 // Add TypeScript definitions for the Web Speech API
@@ -339,7 +339,7 @@ const VoiceControl = ({ onBotResponse, animationComplete = true }: VoiceControlP
         processedInput = userInput.replace(/Naman/gi, HINDI_PHRASES.namanName);
       }
       
-      const response = await sendMessageToOpenAI(processedInput);
+      const response = await sendMessageToGemini(processedInput);
 
       // Process response before displaying/speaking to ensure proper name pronunciation
       let processedResponse = response;
